@@ -1,0 +1,10 @@
+User Stories:
+
+1. As a user, I want to register so that I can create an account.
+2. As a user, I want to login so that I can access my account.
+3. As a user, I want to search for products to find items quickly.
+4. As a user, I want to add products to cart so that I can purchase later.
+5. As a user, I want to make payment securely to complete my purchase.
+6. As a user, I want to view my order history.
+7. As a tester, I want to verify payment failure scenarios.
+8. As a tester, I want to validate cart updates correctly.

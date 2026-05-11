@@ -1,0 +1,52 @@
+Product: E-Commerce Platform
+
+Overview:
+The system allows users to browse products, add items to cart, and complete purchases securely.
+
+Modules:
+
+1. User Authentication
+- Users can register using email and password
+- Login functionality with session management
+- Password reset via email
+
+2. Product Catalog
+- Display list of products
+- Filter by category, price
+- Search functionality
+
+3. Cart Management
+- Add/remove items
+- Update quantity
+- View total price
+
+4. Payment Gateway Module:
+
+    Overview:
+    The payment system enables users to complete purchases securely using third-party gateways.
+
+    Key Features:
+    - Integration with Razorpay and Stripe
+    - Secure checkout process
+    - Handles both payment success and failure scenarios
+
+    Flow:
+    1. User proceeds to checkout
+    2. System validates cart and authentication
+    3. Payment request sent to gateway (Razorpay/Stripe)
+    4. On success → order is created
+    5. On failure → user is notified and retry allowed
+
+    Dependencies:
+    - Cart Management (for total price)
+    - User Authentication (for user validation)
+    - Order Management (triggered after success)
+
+5. Order Management
+- Place order
+- View order history
+- Track order status
+
+Dependencies:
+- Payment depends on Cart and User Authentication
+- Order depends on Payment confirmation

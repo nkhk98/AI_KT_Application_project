@@ -1,0 +1,43 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f5f7;
+  margin: 0;
+  padding: 10px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #0052cc;
+  margin-bottom: 10px;
+}
+
+.confidence-card {
+  font-weight: bold;
+}
+
+.badge {
+  display: inline-block;
+  background: #0052cc;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.badge-container {
+  margin-top: 8px;
+}
