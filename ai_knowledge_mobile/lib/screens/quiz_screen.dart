@@ -25,20 +25,28 @@ class _QuizScreenState extends State<QuizScreen> {
 
   Future<void> fetchQuiz() async {
     try {
-      final response = await Dio().get("http://192.168.0.101:3000/daily-quiz");
+      final response = await Dio().get(
+        "http://192.168.0.102:3000/generate-quiz",
+      );
 
       print("RESPONSE:");
       print(response.data);
 
-      setState(() {
-        questions = response.data["questions"];
+      if (response.data["questions"] != null) {
+        setState(() {
+          questions = response.data["questions"];
 
-        loading = false;
-      });
+          loading = false;
+        });
+      } else {
+        print("No questions key");
+        setState(() {
+          loading = false;
+        });
+      }
     } catch (e) {
       print("ERROR:");
       print(e);
-
       setState(() {
         loading = false;
       });
@@ -46,6 +54,10 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   void checkAnswer(String selected) {
+    setState(() {
+      submitted = true;
+      selectedOption = selected;
+    });
     if (selected == questions[currentQuestion]["answer"]) {
       score++;
     }
@@ -100,35 +112,41 @@ class _QuizScreenState extends State<QuizScreen> {
 
                 width: double.infinity,
 
-                child: !submitted
-                    ? ElevatedButton(
-                        onPressed: () => checkAnswer(option),
-                        child: Text(option),
-                      )
-                    : ElevatedButton(
-                        onPressed: () {
-                          if (currentQuestion < questions.length - 1) {
-                            setState(() {
-                              currentQuestion++;
-                              submitted = false;
-                              selectedOption = "";
-                            });
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ResultScreen(
-                                  score: score,
-                                  total: questions.length,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text("Next"),
-                      ),
+                child: ElevatedButton(
+                  onPressed: submitted ? null : () => checkAnswer(option),
+
+                  child: Text(option),
+                ),
               );
             }).toList(),
+
+            const SizedBox(height: 20),
+
+            if (submitted)
+              ElevatedButton(
+                onPressed: () {
+                  if (currentQuestion < questions.length - 1) {
+                    setState(() {
+                      currentQuestion++;
+
+                      submitted = false;
+
+                      selectedOption = "";
+                    });
+                  } else {
+                    Navigator.push(
+                      context,
+
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            ResultScreen(score: score, total: questions.length),
+                      ),
+                    );
+                  }
+                },
+
+                child: const Text("Next"),
+              ),
           ],
         ),
       ),
