@@ -1,4 +1,9 @@
+import json
+import re
+
 from google import genai
+from fastapi import UploadFile, File
+import shutil
 import os
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -13,6 +18,12 @@ from retriever import retrieve_docs
 # Gemini Client
 client = genai.Client(
     api_key=os.environ.get("GEMINI_API_KEY")
+)
+
+UPLOAD_DIR = "data/new_docs"
+os.makedirs(
+    UPLOAD_DIR,
+    exist_ok=True
 )
 
 app = FastAPI()
@@ -164,7 +175,7 @@ def generate_quiz():
     )
 
     context = "\n\n".join([
-        d.page_content for d in docs
+        d.page_content for d in docs[:3]
     ])
 
     prompt = f"""
@@ -174,7 +185,9 @@ def generate_quiz():
     - Based ONLY on context
     - Include 4 options
     - Mention correct answer
-    - Cover different modules
+    - Return only valid JSON
+    - No Markdown
+    - No Explanations
 
     Return JSON format:
 
@@ -193,10 +206,63 @@ def generate_quiz():
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         config={
-            "system_instruction": "you are a Senior architect, with this role generate 5 simple trivia questions on the provided documents with Multi choice answers",
+            "system_instruction": "generate a clean quiz based on the provided context",
             "temperature": 0.2
         },
         contents=prompt
     )
 
-    return response.text
+    raw_text = response.text.strip()
+    print("RAW QUIZ RESPONSE:")
+    print(raw_text)
+    try:
+        cleaned = re.sub(r"```json|```", "", raw_text).strip()
+        quiz_json = json.loads(cleaned)
+        return{
+            "questions": quiz_json
+        }
+    except Exception as e:
+        print(f"Quiz Parse Error: {e}")
+        return {"questions": []}
+
+@app.post("/upload-doc")
+async def upload_document(
+    file: UploadFile = File(...)
+):
+
+    try:
+
+        filename = file.filename or "uploaded_file"
+        file_path = os.path.join(
+            UPLOAD_DIR,
+            filename
+        )
+
+        # Save file
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(
+                file.file,
+                buffer
+            )
+
+        # Trigger indexing
+        try:
+            import retriever
+
+            if hasattr(retriever, "add_document_to_index"):
+                retriever.add_document_to_index(file_path)
+            else:
+                from vector_store import create_vector_store
+                create_vector_store()
+
+            return {
+                "message": f"{file.filename} indexed successfully"
+            }
+        except Exception as e:
+            return {"error": str(e)}
+
+    except Exception as e:
+
+        return {
+            "error": str(e)
+        }

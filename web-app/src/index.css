@@ -11,3 +11,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.analysis-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.analysis-container h1, .analysis-container h2, .analysis-container h3 {
+  color: #ff0072;
+  margin-top: 15px;
+}
+
+.analysis-container ul {
+  padding-left: 20px;
+}
+
+.analysis-container strong {
+  color: #000;
+}
+
+.analysis-container p {
+  margin-bottom: 10px;
+}

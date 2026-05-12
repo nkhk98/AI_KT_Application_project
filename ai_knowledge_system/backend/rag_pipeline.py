@@ -80,6 +80,7 @@ def generate_answer(query: str):
                     "- Use ONLY the given context\n"
                     "- If relevant information exists, you MUST answer\n"
                     "- DO NOT say 'Not found' if even partial info exists\n"
+                    "- when relevant info is not present and 'Not found in doc' then strinctly the faithfullness and relevance should drop below 0.5, ideally near 0\n"
                     "- Only say 'Not found in documentation' if context is completely empty or unrelated\n"
 
                     "OUTPUT FORMAT:\n"

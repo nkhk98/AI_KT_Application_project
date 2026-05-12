@@ -78,3 +78,30 @@
   box-shadow: 0 2px 10px rgba(0,0,0,0.2);
   z-index: 10;
 }
+
+.upload-box {
+
+  padding: 20px;
+  margin-bottom: 20px;
+
+  border: 2px dashed #ccc;
+
+  border-radius: 10px;
+
+  background: #fafafa;
+}
+
+.upload-box button {
+
+  margin-left: 10px;
+
+  padding: 8px 16px;
+
+  background: #ff0072;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 6px;
+}

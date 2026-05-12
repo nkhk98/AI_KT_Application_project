@@ -17,7 +17,8 @@ function HomePage() {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [file, setFile] = useState(null);
+  const [uploadStatus,setUploadStatus] = useState("");
   const handleQuery = async () => {
 
     if (!query) return;
@@ -44,6 +45,55 @@ function HomePage() {
 
     setLoading(false);
   };
+  const handleFileUpload =
+    async () => {
+
+    if (!file) {
+
+      alert(
+        "Select a document"
+      );
+
+      return;
+    }
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      "file",
+      file
+    );
+
+    try {
+
+      setUploadStatus(
+        "Uploading..."
+      );
+
+      const res =
+        await axios.post(
+          "http://127.0.0.1:3000/upload-doc",
+          formData,
+          {
+            headers: {
+              "Content-Type":
+                "multipart/form-data"
+            }
+          }
+        );
+
+      setUploadStatus(
+        "Indexed successfully"
+      );
+
+    } catch (err) {
+
+      setUploadStatus(
+        " Upload failed"
+      );
+    }
+  };
 
   return (
 
@@ -56,9 +106,30 @@ function HomePage() {
           View Application Nervous System →
         </Link>
       </div>
-
+      <div className="upload-box">
+        <h3>
+          📂 Upload Knowledge Document
+        </h3>
+        <input
+          type="file"
+          accept=".pdf,.txt,.docx"
+          onChange={(e) =>
+            setFile(
+              e.target.files[0]
+            )
+          }
+        />
+        <button
+          onClick={handleFileUpload}
+        >
+          Upload & Index
+        </button>
+        <p>
+          {uploadStatus}
+        </p>
+      </div>
+      
       <div className="input-box">
-
         <input
           value={query}
           onChange={(e) =>
@@ -66,7 +137,6 @@ function HomePage() {
           }
           placeholder="Ask about system..."
         />
-
         <button onClick={handleQuery}>
           Ask
         </button>
@@ -81,7 +151,14 @@ function HomePage() {
 
           <h3>📌 Answer</h3>
 
-          <pre>{response.answer}</pre>
+          <div 
+            className="markdown-content"
+            dangerouslySetInnerHTML={{ 
+              __html: window.marked 
+                ? window.marked.parse(response.answer) 
+                : response.answer.replace(/\n/g, '<br>') 
+            }} 
+          />
 
           <h4>📊 Confidence</h4>
 
